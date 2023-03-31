@@ -1,0 +1,205 @@
+body{
+    font-family:"Nunito";
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    position: relative;
+}
+
+nav {
+    background-color: #333;
+    border-bottom: 5px solid #dd3810;
+    color: white;
+    display: flex;
+    vertical-align: center;
+}
+
+nav a {
+    display: block;
+    padding: 8px 10px;
+}
+
+nav h1 {
+    align-self: center;
+}
+
+
+main{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+img {
+    height: 80px;
+    width: 115px;
+    padding: 5px;
+}
+
+#navbackbutton {
+    background-color: #dd3810;
+    border: 2px solid #dd3810;
+    color: white;
+    display: block;
+    align-self: center;
+    height: 40px;
+}
+
+/* ----- Left Content ----- */
+
+.leftcontent {
+    position: absolute;
+    float: left;
+    width: 50%;
+    height: 100vh;
+    border-right: 2px solid #111;
+    z-index: 2;
+}
+
+/* -- Select School -- */
+
+#selectschool, #selectclass {
+    width: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+}
+
+.selectionheader {
+    width: 100%;
+    height: 70px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    line-height: 10px;
+}
+
+.selectionheader input {
+    width: 220px;
+    transition: all .1s ease-in-out;
+    padding: .6875rem .75rem;
+    border: 0.0625rem solid #999;
+    border-radius: 0.429rem;
+    align-self: center;
+}
+
+#schooltable, #classtable {
+    margin-top: 0px;
+}
+
+#schooltable li, #classtable li, #transferworktable li{
+    height: 60px;
+    width: 100%;
+    border-bottom: 1px solid #999;
+    list-style: none;
+    text-align: left;
+}
+
+#schooltable button{
+    height: 100%;
+    width: 100%;
+    text-align: left;
+    color: #333;
+    background-color: transparent;
+    border: transparent;
+    font-size: medium;
+}
+
+#schooltable button:hover{
+    background-color: #c9efff;
+    transition: all .1s ease-in-out;
+}
+
+.infinitescroll {
+    left: 0px;
+    width: 100%;
+    overflow-y:scroll;
+    position: absolute;
+    height: 100%;
+}
+
+#classtable .classInfo , .transferitem{
+    float: left;
+    display: block;
+    height: auto;
+    width: auto;
+    margin-top: 20px;
+}
+
+.classAdd {
+    background-color: #dd3810;
+    border: 2px solid #dd3810;
+    color: white;
+    display: block;
+    height: 30px;
+    width: 60px;
+    float: right;
+    margin-right: 10px;
+    margin-top: 15px;
+}
+
+/* ----- Right Content ----- */
+
+.rightcontent {
+    position: absolute;
+    float: right;
+    width: 50%;
+    height: 100vh;
+    margin-left: 50%;
+    background-color: #eee;
+    z-index: 1;
+}
+
+#transferwork {
+    width: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+}
+
+.transferworkheader {
+    width: 100%;
+    height: 70px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: center;
+}
+
+#transferworktable {
+    margin-top: 0px;
+}
+
+/*#transferworktable button{
+    height: 100%;
+    width: 100%;
+    text-align: left;
+    font-size: small;
+    color: #333;
+    background-color: transparent;
+    border: transparent;
+    font-size: medium;
+}*/
+
+.transferitem {
+    float:left;
+    height: 60px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.matrixRemoveButton {
+    background-color: #dd3810;
+    border: 2px solid #dd3810;
+    color: white;
+    display: block;
+    height: 30px;
+    width: 80px;
+    float: right;
+    margin-right: 10px;
+    margin-top: 0px;
+}
