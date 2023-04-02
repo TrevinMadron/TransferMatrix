@@ -191,7 +191,7 @@ function RefreshList() {
 
 // Fetches the specified UNL file and loads it into an object format
 async function fetchUnl(file) {
-    let response = await fetch("/" + file);
+    let response = await fetch(file);
 
     console.log(response.status); // 200
     console.log(response.statusText); // OK
