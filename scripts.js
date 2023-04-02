@@ -210,7 +210,8 @@ async function fetchUnl(file) {
             // Returns each line as string (Not sure if needed..?)
             //.slice(data.indexOf('\n'))
         
-            // Splits each line into substrings 
+            // Splits each line into substrings
+            .trimEnd()
             .split('\n').map(v => {
             const values = v.split(delimiter);
             return titles.reduce(
