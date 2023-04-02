@@ -21,6 +21,7 @@ let transferWorkList = document.getElementById('transferworktable');
 const schoolSearchBox = document.getElementById('schoolsearch')
 let schoolList = await fetchUnl("names.unl");
 populateSchools(schoolList);
+let classList = await fetchUnl("courses.unl");
 
 // RUNS ON PAGE LOAD - Adds all schools to list and adds event listener to each element for click detection
 function populateSchools(schoolList) {
@@ -96,37 +97,6 @@ navBackButton.addEventListener('click', () => {
     document.getElementById('selectschool').style.display = 'block';
     document.getElementById('selectclass').style.display = 'none';
 });
-
-let classList = await fetchUnl("courses.unl");
-/*let classList = [
-    {
-        "number" : "4",
-        "code" : "AR 103",
-        "name" : "ART AWARENESS",
-        "equiv" : "ART   0000",
-        "date" : "1/15/1940;7/30/2002",
-        "type" : "UNI",
-        "classification" : "LOWER"
-    },
-    {
-        "number" : "4",
-        "code" : "MATH 099",
-        "name" : "ALGEBRA SKILLS",
-        "equiv" : "MATH 1113",
-        "date" : "1/15/1940;7/30/2004;",
-        "type" : "UNI",
-        "classification" : "LOWER"
-    },
-    {
-        "number" : "4",
-        "code" : "BUS 103",
-        "name" : "INTRO TO BUSINESS",
-        "equiv" : "BUS 1113",
-        "date" : "1/15/1940;;",
-        "type" : "UNI",
-        "classification" : "LOWER"
-    }
-]*/
 
 // Monitors for changes in the class search box and updates class list
 const classInputHandler = function(e) {
