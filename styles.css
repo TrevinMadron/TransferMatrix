@@ -124,7 +124,7 @@ img {
     height: 100%;
 }
 
-#classtable .classInfo , .transferitem{
+#classtable .classInfo {
     float: left;
     display: block;
     height: auto;
@@ -187,7 +187,8 @@ img {
 
 .transferitem {
     float:left;
-    height: 60px;
+    display: block;
+    height: auto;
     width: 100%;
     margin-top: 15px;
 }
