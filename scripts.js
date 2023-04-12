@@ -17,11 +17,9 @@ let transferWorkList = document.getElementById('transferworktable');
 
 ----------- */
 
-
-const schoolSearchBox = document.getElementById('schoolsearch')
-let schoolList = await fetchUnl("names.unl");
+let schoolList = await fetchSchoolList();
 populateSchools(schoolList);
-let classList = await fetchUnl("courses.unl");
+let classList = [{}];
 
 // RUNS ON PAGE LOAD - Adds all schools to list and adds event listener to each element for click detection
 function populateSchools(schoolList) {
@@ -38,7 +36,8 @@ function populateSchools(schoolList) {
     }
 }
 
-// Monitors for changes in the school search box and updates school list
+// School search box functionality
+const schoolSearchBox = document.getElementById('schoolsearch')
 const schoolInputHandler = function(e) {
     $("#schooltable").empty();
     let search = e.target.value;
@@ -58,25 +57,24 @@ const schoolInputHandler = function(e) {
 schoolSearchBox.addEventListener('input', schoolInputHandler);
 
 // Loads class list based on selected (clicked) school and appends classes to list
-function selectSchool(schoolNumber, schoolName) {
+async function selectSchool(schoolNumber, schoolName) {
     // Sets global current school variable to currently selected school
     currentSchoolNumber = schoolNumber;
+    await fetchClassList();
     document.getElementById('selectschool').style.display = 'none';
     document.getElementById('selectclass').style.display = 'block';
     document.getElementById('schoolname').textContent = schoolName;
     for(let i in classList) {
         if(classList[i].number == currentSchoolNumber) {
-            if(classList[i].number == schoolNumber) {
-                $("#classtable").append(
-                    "<li><div><div class='classInfo'>" +
-                    classList[i].name + " - (" + classList[i].code + ")</div><button class='classAdd' id='" +
-                    classList[i].code + "'>+ Add</button></div></li>"   
-                );
+            $("#classtable").append(
+                "<li><div><div class='classInfo'>" +
+                classList[i].name + " - (" + classList[i].code + ")</div><button class='classAdd' id='" +
+                classList[i].code + "'>+ Add</button></div></li>"   
+            );
 
-                document.getElementById(classList[i].code).addEventListener('click', () => {
-                    AddClassToList(classList[i])
-                });
-            }
+            document.getElementById(classList[i].code).addEventListener('click', () => {
+                AddClassToList(classList[i])
+            });
         }
     }
 }
@@ -88,8 +86,7 @@ function selectSchool(schoolNumber, schoolName) {
 
 ----------- */
 
-const classSearchBox = document.getElementById('classsearch')
-// Sends ClassView back to SchoolView and empties the class table
+// Back Button -- Sends ClassView back to SchoolView and empties the class table
 const navBackButton = document.getElementById("navbackbutton")
 navBackButton.addEventListener('click', () => {
     currentSchoolNumber = 0;
@@ -98,7 +95,8 @@ navBackButton.addEventListener('click', () => {
     document.getElementById('selectclass').style.display = 'none';
 });
 
-// Monitors for changes in the class search box and updates class list
+// Class search box functionality
+const classSearchBox = document.getElementById('classsearch')
 const classInputHandler = function(e) {
     $("#classtable").empty();
     let search = e.target.value;
@@ -121,12 +119,16 @@ const classInputHandler = function(e) {
 }
 classSearchBox.addEventListener('input', classInputHandler);
 
+// Adds class to the transfer work table list
+// Called from the "+ Add" buttons on the class lists
 function AddClassToList(course) {
     savedClassList.push(course)
     RefreshList();
 }
 
 // WIP -- Will remove any courses with the same course number regardless of school
+// Removes class from the transfer work table list
+// Called from the "- Remove" buttons from the transfer work table list
 function RemoveClassFromList(number, course) {
     savedClassList = savedClassList.filter(function(e) {
         return e.code != course;
@@ -134,6 +136,8 @@ function RemoveClassFromList(number, course) {
     RefreshList();
 }
 
+// Refreshes the transfer work table list
+// Called when a class is added or removed from the list
 function RefreshList() {
     $("#transferworktable").empty();
     for(let i in savedClassList){
@@ -159,9 +163,9 @@ function RefreshList() {
 
 ----------- */
 
-// Fetches the specified UNL file and loads it into an object format
-async function fetchUnl(file) {
-    let response = await fetch(file);
+// Fetches the names.unl file and loads the school/institution list into an object format
+async function fetchSchoolList() {
+    let response = await fetch("names.unl");
 
     console.log(response.status); // 200
     console.log(response.statusText); // OK
@@ -169,18 +173,11 @@ async function fetchUnl(file) {
     if (response.status === 200) {
         let data = await response.text();
         let delimiter = ";"
-        // handle data
+        // Organizes the data into object format
         let structure = "number;name;state;\n";
-        if (file == "courses.unl") {
-            structure = "number;code;name;equiv;date;type;classification;\n";
-        }
         const titles = structure.slice(0, structure.indexOf('\n')).split(delimiter);
         
         return data
-            // Returns each line as string (Not sure if needed..?)
-            //.slice(data.indexOf('\n'))
-        
-            // Splits each line into substrings
             .trimEnd()
             .split('\n').map(v => {
             const values = v.split(delimiter);
@@ -188,6 +185,35 @@ async function fetchUnl(file) {
                 (obj, title, index) => ((obj[title] = values[index]), obj),
                 {}
             );
+        });
+    }
+}
+
+async function fetchClassList() {
+    // Empties the current class list
+    classList = [{}];
+    let response = await fetch("courses.unl");
+    console.log(response.status); // 200
+    console.log(response.statusText); // OK
+
+    // If response is received
+    if (response.status === 200) {
+        let data = await response.text();
+        let delimiter = ";"
+        // Structure of the data
+        let structure = "number;code;name;equiv;date;;type;classification;\n";
+        const titles = structure.slice(0, structure.indexOf('\n')).split(delimiter);
+            data.trimEnd().trimEnd().split('\n').map(v => {
+            const values = v.split(delimiter);
+            // If the school number in the courses.unl file match the currently selected school,
+            // read the line and add it to the class list
+            if(values[0] == currentSchoolNumber) {
+                let temp = titles.reduce(
+                    (obj, title, index) => ((obj[title] = values[index]), obj),
+                    {}
+                )
+                classList.push({"number" : temp.number, "code" : temp.code, "name" : temp.name, "equiv" : temp.equiv, "date" : temp.date, "type" : temp.type, "classification" : temp.classification });
+            }
         });
     }
 }
