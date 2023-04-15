@@ -6,7 +6,7 @@ classView.style.display = 'none';
 
 // Global variable to save the id of the currently viewed school (default is zero if no schools selected)
 let currentSchoolNumber = 0;
-// Array to store classes that are added by the end user
+// Array to store classes that are added by the user
 let savedClassList = [];
 let transferWorkList = document.getElementById('transferworktable');
 
@@ -17,8 +17,13 @@ let transferWorkList = document.getElementById('transferworktable');
 
 ----------- */
 
+// Awaits for the schoolList array to populate, then fills the table in HTML
 let schoolList = await fetchSchoolList();
 populateSchools(schoolList);
+
+// A temporary object-array to help handle class data before parsing
+let tempClassList = [{}];
+// The actual object-array that is used to display the results
 let classList = [{}];
 
 // RUNS ON PAGE LOAD - Adds all schools to list and adds event listener to each element for click detection
@@ -60,6 +65,7 @@ schoolSearchBox.addEventListener('input', schoolInputHandler);
 async function selectSchool(schoolNumber, schoolName) {
     // Sets global current school variable to currently selected school
     currentSchoolNumber = schoolNumber;
+    // Waits for the classList to populate before displaying the data
     await fetchClassList();
     document.getElementById('selectschool').style.display = 'none';
     document.getElementById('selectclass').style.display = 'block';
@@ -68,11 +74,11 @@ async function selectSchool(schoolNumber, schoolName) {
         if(classList[i].number == currentSchoolNumber) {
             $("#classtable").append(
                 "<li><div><div class='classInfo'>" +
-                classList[i].name + " - (" + classList[i].code + ")</div><button class='classAdd' id='" +
-                classList[i].code + "'>+ Add</button></div></li>"   
+                classList[i].name + " - (" + classList[i].code + ")</div><button class='classAdd' id='classAdd" + 
+                classList[i].number + classList[i].code + "'>+ Add</button></div></li>"   
             );
 
-            document.getElementById(classList[i].code).addEventListener('click', () => {
+            document.getElementById("classAdd" + classList[i].number + classList[i].code).addEventListener('click', () => {
                 AddClassToList(classList[i])
             });
         }
@@ -100,17 +106,14 @@ const classSearchBox = document.getElementById('classsearch')
 const classInputHandler = function(e) {
     $("#classtable").empty();
     let search = e.target.value;
-
     for(let i in classList){
         if(classList[i].number == currentSchoolNumber) {
             if(classList[i].name.toLowerCase().includes(search.toLowerCase()) || classList[i].code.toLowerCase().includes(search.toLowerCase())){
                 $("#classtable").append(
                     "<li><div><div class='classInfo'>" +
-                    classList[i].name + " - (" + classList[i].code + ")</div><button class='classAdd' id='" +
-                    classList[i].code + "'>+ Add</button></div></li>" 
+                    classList[i].name + " - (" + classList[i].code + ")</div><button class='classAdd' id='classAdd" + classList[i].number + classList[i].code + "'>+ Add</button></div></li>" 
                 );
-
-                document.getElementById(classList[i].code).addEventListener('click', () => {
+                document.getElementById("classAdd" + classList[i].number + classList[i].code).addEventListener('click', () => {
                     AddClassToList(classList[i])
                 });
             }
@@ -129,10 +132,15 @@ function AddClassToList(course) {
 // WIP -- Will remove any courses with the same course number regardless of school
 // Removes class from the transfer work table list
 // Called from the "- Remove" buttons from the transfer work table list
-function RemoveClassFromList(number, course) {
-    savedClassList = savedClassList.filter(function(e) {
-        return e.code != course;
-    });
+function RemoveClassFromList(course) {
+    let newClassList = [];
+    for(let i in savedClassList) {
+        if (!(savedClassList[i].number == course.number && savedClassList[i].code == course.code && savedClassList[i].name == course.name))
+        {
+            newClassList.push(savedClassList[i])
+        }
+    }
+    savedClassList = newClassList;
     RefreshList();
 }
 
@@ -140,16 +148,39 @@ function RemoveClassFromList(number, course) {
 // Called when a class is added or removed from the list
 function RefreshList() {
     $("#transferworktable").empty();
-    for(let i in savedClassList){
-        $("#transferworktable").append(
-            "<li><div class='transferitem'><div style='float:left;width:40%'>" +
-            savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='float:left;width:5%;'>→</div><div style='float:left;width:40%;'>" +
-            savedClassList[i].equiv + " - (" + savedClassList[i].classification +
-            "-LEVEL)</div><div style='float:left;width:15%;'><button class='matrixRemoveButton' id='matrixRemove" + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"    
-        );
+    for(let i in savedClassList) {
+        // Checks how many records each class has to determine the CSS styling required
+        if (savedClassList[i].records == 1) {
+            $("#transferworktable").append(
+                "<li><div class='transferitem'><div style='float:left;width:40%'>" +
+                savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='float:left;width:5%;'>→</div><div style='float:left;width:40%;'>" +
+                savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +
+                "-LEVEL)</div><div style='float:left;width:15%;'><button class='matrixRemoveButton' id='matrixRemove" + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"    
+            );
+        } else if (savedClassList[i].records == 2) {
+            $("#transferworktable").append(
+                "<li><div class='transferitem2'><div style='float:left;width:40%'>" +
+                savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='float:left;width:5%;'>→</div><div style='float:left;width:40%;'>" +
+                savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +
+                "-LEVEL)</div><div style='float:left;width:40%;'>" +
+                savedClassList[i].equiv1 + " - (" + savedClassList[i].classification1 +
+                "-LEVEL)</div><div style='float:left;width:15%;'><button class='matrixRemoveButton' id='matrixRemove" + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"    
+            );
+        } else {
+            $("#transferworktable").append(
+                "<li><div class='transferitem3'><div style='float:left;width:40%'>" +
+                savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='float:left;width:5%;'>→</div><div style='float:left;width:40%;'>" +
+                savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +
+                "-LEVEL)</div><div style='float:left;width:40%;'>" +
+                savedClassList[i].equiv1 + " - (" + savedClassList[i].classification1 +
+                "-LEVEL)</div><div style='float:left;width:40%;'>" +
+                savedClassList[i].equiv2 + " - (" + savedClassList[i].classification2 +
+                "-LEVEL)</div><div style='float:left;width:15%;'><button class='matrixRemoveButton' id='matrixRemove" + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"    
+            );
+        }
 
         document.getElementById('matrixRemove' + savedClassList[i].number + savedClassList[i].code).addEventListener('click', function(e) {
-            RemoveClassFromList(savedClassList[i].number, savedClassList[i].code)
+            RemoveClassFromList(savedClassList[i])
         });
     }
 }
@@ -165,13 +196,10 @@ function RefreshList() {
 
 // Fetches the names.unl file and loads the school/institution list into an object format
 async function fetchSchoolList() {
-    let response = await fetch("names.unl");
-
-    console.log(response.status); // 200
-    console.log(response.statusText); // OK
-
-    if (response.status === 200) {
+    let response = await fetch("names.unl");                // Waits for response from server
+    if (response.status === 200) {                          // If response is good (sig 200), receive as text
         let data = await response.text();
+        console.log("Pulled school list from file");
         let delimiter = ";"
         // Organizes the data into object format
         let structure = "number;name;state;\n";
@@ -186,19 +214,20 @@ async function fetchSchoolList() {
                 {}
             );
         });
+    } else {
+
     }
 }
 
+
+// Fetches the courses.unl file, parses through the data to check for and group mutliple values, then creates an array of class objects
 async function fetchClassList() {
     // Empties the current class list
     classList = [{}];
-    let response = await fetch("courses.unl");
-    console.log(response.status); // 200
-    console.log(response.statusText); // OK
-
-    // If response is received
-    if (response.status === 200) {
+    let response = await fetch("courses.unl");              // Waits for response from server
+    if (response.status === 200) {                          // If response is good (sig 200), receive as text
         let data = await response.text();
+        console.log("Pulled class list from file");
         let delimiter = ";"
         // Structure of the data
         let structure = "number;code;name;equiv;date;;type;classification;\n";
@@ -212,27 +241,48 @@ async function fetchClassList() {
                     (obj, title, index) => ((obj[title] = values[index]), obj),
                     {}
                 )
-                classList.push({"number" : temp.number, "code" : temp.code, "name" : temp.name, "equiv" : temp.equiv, "date" : temp.date, "type" : temp.type, "classification" : temp.classification });
+                // Makes sure object sent is not an empty prototype and adds to temporary array
+                if (temp.hasOwnProperty("number")) {
+                    tempClassList.push({"number" : temp.number, "code" : temp.code, "name" : temp.name, "equiv0" : temp.equiv, "date0" : temp.date, "type0" : temp.type, "classification0" : temp.classification, "records" : 1});
+                }
+            }
+        });
+        // Checks for duplicated entries based on institution, course code, and name
+        // These courses are then lumped into a singular class to select with multiple values and output to the classList array
+        tempClassList.map(v => {
+            if (v.hasOwnProperty("number")) {
+                let dupes = tempClassList.filter(e => e.number === v.number && e.code === v.code);
+                let length = dupes.length
+                let obj = {};
+                // Makes sure datapoint isn't empty, then assigns values
+                if (length != 0) {
+                    obj.number = dupes[0].number;
+                    obj.code = dupes[0].code;
+                    obj.name = dupes[0].name;
+                    obj.records = length;
+                    obj.equiv0 = dupes[0].equiv0;
+                    obj.date0 = dupes[0].date0;
+                    obj.classification0 = dupes[0].classification0;
+                    // If multiple datapoints exist for the same class, adds the values to the corresponding object
+                    if (length >= 2)
+                    {
+                        try {
+                            tempClassList = tempClassList.filter(function(el) { return el.number != dupes[0].number && el.code != dupes[0].code; });
+                        } catch {
+                            console.log("Something went wrong filtering the temp class, attempting to continue")
+                        }
+                        obj.equiv1 = dupes[1].equiv0;
+                        obj.date1 = dupes[1].date0;
+                        obj.classification1 = dupes[1].classification0;
+                        if (length >= 3) {
+                            obj.equiv2 = dupes[2].equiv0;
+                            obj.date2 = dupes[2].date0;
+                            obj.classification2 = dupes[2].classification0;
+                        }
+                    }
+                    classList.push(obj);
+                }
             }
         });
     }
 }
-
-
-/*const client = new S3Client({})
-
-export const main = async () => {
-  const command = new GetObjectCommand({
-    Bucket: "ecutransfermatrix",
-    Key: "names.uml"
-  });
-
-  try {
-    const response = await client.send(command);
-    // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
-    const str = await response.Body.transformToString();
-    console.log(str);
-  } catch (err) {
-    console.error(err);
-  }
-};*/
