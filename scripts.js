@@ -4,7 +4,7 @@ const classView = document.getElementById('selectclass');
 schoolView.style.display = 'block';
 classView.style.display = 'none';
 
-// Global variable to save the id of the currently viewed school (default is zero if no schools selected)
+// Global variables to save the id and name of the currently viewed school (default is zero or null if no schools selected)
 let currentSchoolNumber = 0;
 let currentSchoolName = null;
 // Array to store classes that are added by the user
@@ -64,7 +64,7 @@ schoolSearchBox.addEventListener('input', schoolInputHandler);
 
 // Loads class list based on selected (clicked) school and appends classes to list
 async function selectSchool(schoolNumber, schoolName) {
-    // Sets global current school variable to currently selected school
+    // Sets global current school variables to currently selected school
     currentSchoolNumber = schoolNumber;
     currentSchoolName = schoolName;
     // Waits for the classList to populate before displaying the data
@@ -138,7 +138,6 @@ function AddClassToList(course) {
     RefreshList();
 }
 
-// WIP -- Will remove any courses with the same course number regardless of school
 // Removes class from the transfer work table list
 // Called from the "- Remove" buttons from the transfer work table list
 function RemoveClassFromList(course) {
@@ -207,7 +206,6 @@ function RefreshList() {
 }
 
 
-
 /*  ----------
 
 # REGION - Unl Parsing
@@ -235,8 +233,6 @@ async function fetchSchoolList() {
                 {}
             );
         });
-    } else {
-
     }
 }
 
