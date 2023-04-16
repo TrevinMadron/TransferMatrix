@@ -147,11 +147,6 @@ img {
     margin-top: 15px;
 }
 
-.classAdd button:disabled {
-    background-color: #909090;
-    border: 2px solid #909090;
-}
-
 /* ----- Right Content ----- */
 
 .rightcontent {

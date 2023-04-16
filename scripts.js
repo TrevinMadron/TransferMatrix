@@ -129,7 +129,12 @@ classSearchBox.addEventListener('input', classInputHandler);
 // Called from the "+ Add" buttons on the class lists
 function AddClassToList(course) {
     savedClassList.push(course)
-    //document.getElementById("classAdd" + course.number + course.code).disabled = true;
+    let btn = document.getElementById("classAdd" + course.number + course.code)
+    btn.textContent = "- Remove"
+    btn.style.width = "80px";
+    btn.addEventListener('click', () => {
+        RemoveClassFromList(course)
+    });
     RefreshList();
 }
 
@@ -144,7 +149,12 @@ function RemoveClassFromList(course) {
             newClassList.push(savedClassList[i])
         }
     }
-
+    let btn = document.getElementById("classAdd" + course.number + course.code)
+    btn.textContent = "+ Add"
+    btn.style.width = "60px";
+    btn.addEventListener('click', () => {
+        AddClassToList(course)
+    });
     savedClassList = newClassList;
     RefreshList();
 }
