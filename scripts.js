@@ -6,6 +6,7 @@ classView.style.display = 'none';
 
 // Global variable to save the id of the currently viewed school (default is zero if no schools selected)
 let currentSchoolNumber = 0;
+let currentSchoolName = null;
 // Array to store classes that are added by the user
 let savedClassList = [];
 let transferWorkList = document.getElementById('transferworktable');
@@ -65,6 +66,7 @@ schoolSearchBox.addEventListener('input', schoolInputHandler);
 async function selectSchool(schoolNumber, schoolName) {
     // Sets global current school variable to currently selected school
     currentSchoolNumber = schoolNumber;
+    currentSchoolName = schoolName;
     // Waits for the classList to populate before displaying the data
     await fetchClassList();
     document.getElementById('selectschool').style.display = 'none';
@@ -96,6 +98,7 @@ async function selectSchool(schoolNumber, schoolName) {
 const navBackButton = document.getElementById("navbackbutton")
 navBackButton.addEventListener('click', () => {
     currentSchoolNumber = 0;
+    currentSchoolName = null;
     $("#classtable").empty();
     document.getElementById('selectschool').style.display = 'block';
     document.getElementById('selectclass').style.display = 'none';
@@ -126,6 +129,7 @@ classSearchBox.addEventListener('input', classInputHandler);
 // Called from the "+ Add" buttons on the class lists
 function AddClassToList(course) {
     savedClassList.push(course)
+    //document.getElementById("classAdd" + course.number + course.code).disabled = true;
     RefreshList();
 }
 
@@ -140,6 +144,7 @@ function RemoveClassFromList(course) {
             newClassList.push(savedClassList[i])
         }
     }
+
     savedClassList = newClassList;
     RefreshList();
 }
@@ -152,31 +157,37 @@ function RefreshList() {
         // Checks how many records each class has to determine the CSS styling required
         if (savedClassList[i].records == 1) {
             $("#transferworktable").append(
-                "<li><div class='transferitem'><div style='float:left;width:40%'>" +
-                savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='float:left;width:5%;'>→</div><div style='float:left;width:40%;'>" +
-                savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +
-                "-LEVEL)</div><div style='float:left;width:15%;'><button class='matrixRemoveButton' id='matrixRemove" + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"    
-            );
+                "<li style='height: 80px;width: 100%;border-bottom: 1px solid #999;list-style: none;text-align: left;'><div style='float:left;display: block;height: 100%;width: 100%;'><div style='float:left;width:40%; padding: 18px 0;'><div>"
+                + savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].schoolName + "</div></div><div style='float:left;width:5%;padding: 25px 0;'>→</div><div style='float:left;width:40%;padding: 18px 0;'><div>"
+                + savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +"-LEVEL)</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].startdate0 + "-" + savedClassList[i].enddate0 + "</div></div><div style='float:left;width:15%; padding: 25px 0;'><button class='matrixRemoveButton' id='matrixRemove"
+                + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"
+                );
         } else if (savedClassList[i].records == 2) {
             $("#transferworktable").append(
-                "<li><div class='transferitem2'><div style='float:left;width:40%'>" +
-                savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='float:left;width:5%;'>→</div><div style='float:left;width:40%;'>" +
-                savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +
-                "-LEVEL)</div><div style='float:left;width:40%;'>" +
-                savedClassList[i].equiv1 + " - (" + savedClassList[i].classification1 +
-                "-LEVEL)</div><div style='float:left;width:15%;'><button class='matrixRemoveButton' id='matrixRemove" + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"    
-            );
+                "<li style='height: 120px;width: 100%;border-bottom: 1px solid #999;list-style: none;text-align: left;'><div style='float:left;display: block;height: 100%;width: 100%;'><div style='float:left;width:40%; padding: 36px 0;'><div>"
+                + savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].schoolName + "</div></div><div style='float:left;width:5%;padding: 48px 0;'>→</div><div style='float:left;width:40%;padding: 18px 0;'><div>"
+                + savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +"-LEVEL)</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].startdate0 + "-" + savedClassList[i].enddate0 + "</div><div style='padding-top: 7px;'>"
+                + savedClassList[i].equiv1 + " - (" + savedClassList[i].classification1 +"-LEVEL)</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].startdate1 + "-" + savedClassList[i].enddate1 + "</div></div><div style='float:left;width:15%; padding: 48px 0;'><button class='matrixRemoveButton' id='matrixRemove"
+                + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"
+                );
         } else {
             $("#transferworktable").append(
-                "<li><div class='transferitem3'><div style='float:left;width:40%'>" +
-                savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='float:left;width:5%;'>→</div><div style='float:left;width:40%;'>" +
-                savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +
-                "-LEVEL)</div><div style='float:left;width:40%;'>" +
-                savedClassList[i].equiv1 + " - (" + savedClassList[i].classification1 +
-                "-LEVEL)</div><div style='float:left;width:40%;'>" +
-                savedClassList[i].equiv2 + " - (" + savedClassList[i].classification2 +
-                "-LEVEL)</div><div style='float:left;width:15%;'><button class='matrixRemoveButton' id='matrixRemove" + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"    
-            );
+                "<li style='height: 160px;width: 100%;border-bottom: 1px solid #999;list-style: none;text-align: left;'><div style='float:left;display: block;height: 100%;width: 100%;'><div style='float:left;width:40%; padding: 54px 0;'><div>"
+                + savedClassList[i].name + " - (" + savedClassList[i].code + ")</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].schoolName + "</div></div><div style='float:left;width:5%;padding: 64px 0;'>→</div><div style='float:left;width:40%;padding: 12px 0;'><div>"
+                + savedClassList[i].equiv0 + " - (" + savedClassList[i].classification0 +"-LEVEL)</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].startdate0 + "-" + savedClassList[i].enddate0 + "</div><div style='padding-top: 7px;'>"
+                + savedClassList[i].equiv1 + " - (" + savedClassList[i].classification1 +"-LEVEL)</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].startdate1 + "-" + savedClassList[i].enddate1 + "</div><div style='padding-top: 7px;'>"
+                + savedClassList[i].equiv2 + " - (" + savedClassList[i].classification2 +"-LEVEL)</div><div style='font-style:italic;font-size:smaller;'>"
+                + savedClassList[i].startdate2 + "-" + savedClassList[i].enddate2 + "</div></div><div style='float:left;width:15%; padding: 64x 0;'><button class='matrixRemoveButton' id='matrixRemove"
+                + savedClassList[i].number + savedClassList[i].code + "'>- Remove</button></div></div></li>"
+                );
         }
 
         document.getElementById('matrixRemove' + savedClassList[i].number + savedClassList[i].code).addEventListener('click', function(e) {
@@ -230,20 +241,21 @@ async function fetchClassList() {
         console.log("Pulled class list from file");
         let delimiter = ";"
         // Structure of the data
-        let structure = "number;code;name;equiv;date;;type;classification;\n";
+        let structure = "number;code;name;equiv;startdate;enddate;type;classification;\n";
         const titles = structure.slice(0, structure.indexOf('\n')).split(delimiter);
             data.trimEnd().trimEnd().split('\n').map(v => {
             const values = v.split(delimiter);
             // If the school number in the courses.unl file match the currently selected school,
             // read the line and add it to the class list
             if(values[0] == currentSchoolNumber) {
+                let schoolName = currentSchoolName;
                 let temp = titles.reduce(
                     (obj, title, index) => ((obj[title] = values[index]), obj),
                     {}
                 )
                 // Makes sure object sent is not an empty prototype and adds to temporary array
                 if (temp.hasOwnProperty("number")) {
-                    tempClassList.push({"number" : temp.number, "code" : temp.code, "name" : temp.name, "equiv0" : temp.equiv, "date0" : temp.date, "type0" : temp.type, "classification0" : temp.classification, "records" : 1});
+                    tempClassList.push({"number" : temp.number, "code" : temp.code, "name" : temp.name, "equiv0" : temp.equiv, "startdate0" : temp.startdate, "enddate0" : temp.enddate, "type0" : temp.type, "classification0" : temp.classification, "records" : 1, "schoolName" : schoolName});
                 }
             }
         });
@@ -261,8 +273,10 @@ async function fetchClassList() {
                     obj.name = dupes[0].name;
                     obj.records = length;
                     obj.equiv0 = dupes[0].equiv0;
-                    obj.date0 = dupes[0].date0;
+                    obj.startdate0 = dupes[0].startdate0;
+                    obj.enddate0 = dupes[0].enddate0;
                     obj.classification0 = dupes[0].classification0;
+                    obj.schoolName = dupes[0].schoolName;
                     // If multiple datapoints exist for the same class, adds the values to the corresponding object
                     if (length >= 2)
                     {
@@ -272,11 +286,13 @@ async function fetchClassList() {
                             console.log("Something went wrong filtering the temp class, attempting to continue")
                         }
                         obj.equiv1 = dupes[1].equiv0;
-                        obj.date1 = dupes[1].date0;
+                        obj.startdate1 = dupes[1].startdate0;
+                        obj.enddate1 = dupes[1].enddate0;
                         obj.classification1 = dupes[1].classification0;
                         if (length >= 3) {
                             obj.equiv2 = dupes[2].equiv0;
-                            obj.date2 = dupes[2].date0;
+                            obj.startdate2 = dupes[2].startdate0;
+                            obj.enddate2 = dupes[2].enddate0;
                             obj.classification2 = dupes[2].classification0;
                         }
                     }

@@ -54,7 +54,7 @@ img {
 .leftcontent {
     position: absolute;
     float: left;
-    width: 50%;
+    width: 45%;
     height: 100vh;
     border-right: 2px solid #111;
     z-index: 2;
@@ -93,7 +93,7 @@ img {
     margin-top: 0px;
 }
 
-#schooltable li, #classtable li, #transferworktable li{
+#schooltable li, #classtable li{
     height: 60px;
     width: 100%;
     border-bottom: 1px solid #999;
@@ -144,14 +144,19 @@ img {
     margin-top: 15px;
 }
 
+.classAdd button:disabled {
+    background-color: #909090;
+    border: 2px solid #909090;
+}
+
 /* ----- Right Content ----- */
 
 .rightcontent {
     position: absolute;
     float: right;
-    width: 50%;
+    width: 55%;
     height: 100vh;
-    margin-left: 50%;
+    margin-left: 45%;
     background-color: #eee;
     z-index: 1;
 }
@@ -202,5 +207,5 @@ img {
     width: 80px;
     float: right;
     margin-right: 10px;
-    margin-top: 0px;
+    margin-top: -3px;
 }
