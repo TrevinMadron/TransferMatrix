@@ -8,6 +8,8 @@ body{
 
 html {
     position: relative;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 nav {
@@ -163,6 +165,8 @@ img {
 }
 
 #transferwork {
+    white-space: normal;
+word-break: break-word;
     width: auto;
     padding-left: 20px;
     padding-right: 20px;
