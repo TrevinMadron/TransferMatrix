@@ -128,14 +128,22 @@ classSearchBox.addEventListener('input', classInputHandler);
 // Adds class to the transfer work table list
 // Called from the "+ Add" buttons on the class lists
 function AddClassToList(course) {
-    savedClassList.push(course)
-    let btn = document.getElementById("classAdd" + course.number + course.code)
-    btn.textContent = "- Remove"
-    btn.style.width = "80px";
-    btn.addEventListener('click', () => {
-        RemoveClassFromList(course)
-    });
-    RefreshList();
+    let isDuplicate = false;
+    for(let i in savedClassList){
+        if (savedClassList[i].number == course.number && savedClassList[i].code == course.code && savedClassList[i].name == course.name) {
+            isDuplicate = true;
+        }
+    }
+    if (isDuplicate == false) {
+        savedClassList.push(course)
+        let btn = document.getElementById("classAdd" + course.number + course.code)
+        btn.textContent = "- Remove"
+        btn.style.width = "80px";
+        btn.addEventListener('click', () => {
+            RemoveClassFromList(course)
+        });
+        RefreshList();
+    }
 }
 
 // Removes class from the transfer work table list
@@ -148,12 +156,15 @@ function RemoveClassFromList(course) {
             newClassList.push(savedClassList[i])
         }
     }
-    let btn = document.getElementById("classAdd" + course.number + course.code)
-    btn.textContent = "+ Add"
-    btn.style.width = "60px";
-    btn.addEventListener('click', () => {
-        AddClassToList(course)
-    });
+    try {
+        let btn = document.getElementById("classAdd" + course.number + course.code)
+        btn.textContent = "+ Add"
+        btn.style.width = "60px";
+        btn.addEventListener('click', () => {
+            AddClassToList(course)
+        });
+    } catch {
+    }
     savedClassList = newClassList;
     RefreshList();
 }
